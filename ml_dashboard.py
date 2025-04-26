@@ -176,7 +176,7 @@ with col[1]:
 
  
 
-with st.expander('SHAP Analysis Commentary – Insurance Premium Prediction - HistGradientBoosting', expanded=False):
+with st.expander('SHAP Analysis Commentary – Insurance Premium Prediction - HistGradientBoosting', expanded=True):
     st.markdown("""
  
  #### 1. `age`
@@ -201,7 +201,7 @@ with st.expander('SHAP Analysis Commentary – Insurance Premium Prediction - Hi
  
 st_shap(shap.plots.beeswarm(shap_values), height=500)
 
-with st.expander('About the Data', expanded=True):
+with st.expander('About the Data', expanded=False):
     st.write('''
         - :red[**Data**]: [Kaggle Medical Insurance Premium](<https://www.kaggle.com/datasets/tejashvi14/medical-insurance-premium-prediction/data>).
         - :orange[**Age**]: Age of customer.
