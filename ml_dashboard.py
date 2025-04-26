@@ -134,8 +134,8 @@ rmse_chart = (alt.Chart(results_df)
                   color='Model:N'
                   )
               .properties(
-                  width=800,
-                  height=300
+                  width=200,
+                  height=800
                   )
              )
 
@@ -197,7 +197,7 @@ def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
 #
 #    selected_color_theme = 'blues'
 #
-col = st.columns((13, 13, 3, 3, 3, 3), gap='small')
+col = st.columns((13, 3, 3, 3, 3, 3), gap='small')
 
 with col[0]:
     st.markdown('#### LazyPredict Results')
