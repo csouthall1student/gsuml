@@ -159,7 +159,7 @@ alt.themes.enable("quartz")
 
 def st_shap(plot, height=None):
     shap_html = f"<head>{shap.getjs()}</head><body>{plot.html()}</body>"
-    components.html(shap_html, height=height)
+    streamlit.components.v1.html(shap_html, height=height)
 
 
 def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
