@@ -122,10 +122,10 @@ def black_and_white_theme():
     }
 
 # Register the theme
-alt.theme.register('black_and_white', black_and_white_theme)
+alt.themes.register('black_and_white', black_and_white_theme)
 
 # Enable the theme
-alt.theme.enable('black_and_white')
+alt.themes.enable('black_and_white')
 
 
 
