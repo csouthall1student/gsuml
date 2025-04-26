@@ -197,9 +197,26 @@ def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
 #
 #    selected_color_theme = 'blues'
 #
-col = st.columns((13, 3, 3, 3, 3, 3), gap='small')
+col = st.columns((15, 15), gap='small')
+
 
 with col[0]:
+    #st.markdown('#### Fine-Tuned Models Results')
+
+    st.altair_chart(alt.Chart(results_df)
+                    .mark_bar()
+                    .encode(
+                        x='Model:O',
+                        y='CV RMSE:Q',
+                        color='Model:N'
+                        )
+                    .properties(
+                        width=500,
+                        height=500
+                        )
+                    )
+
+with col[1]:
     st.markdown('#### LazyPredict Results')
 
     st.dataframe(models,
@@ -232,12 +249,6 @@ with col[0]:
                      )}
                  )
 
-with col[1]:
-    #st.markdown('#### Fine-Tuned Models Results')
-
-    st.altair_chart(
-        rmse_chart
-        )
 
 with st.expander('About the Data', expanded=True):
     st.write('''
