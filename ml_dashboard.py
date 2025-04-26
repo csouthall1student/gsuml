@@ -192,24 +192,20 @@ with st.sidebar:
     measure_list = ['RMSE', 'R²', 'Adjusted R²', 'CV RMSE', 'CV R²', 'CV Adjusted R²']
     
     select_measure = st.selectbox('Select a measure', measure_list, index=len(measure_list)-1)
-    #df_selected_model = models[results_df.Model == selected_model]
-#    df_selected_model_sorted = df_selected_model.sort_values(by="RMSE", ascending=False)
-#
-#    selected_color_theme = 'blues'
-#
+
 col = st.columns((15, 15), gap='small')
 
 
 
 with col[0]:
-    #st.markdown('#### Fine-Tuned Models Results')
+    st.markdown('#### Fine-Tuned Model Error')
 
     st.altair_chart(alt.Chart(results_df)
                     .mark_bar()
                     .encode(
                         x='Model:O',
                         y=f'{select_measure}:Q',
-                        color='Model:N'
+                        color=alt.Color('Model:N', legend=None)
                         )
                     .properties(
                         width=500,
@@ -253,12 +249,12 @@ with col[1]:
 
 with st.expander('About the Data', expanded=True):
     st.write('''
-        - Data: [Kaggle Medical Insurance Premium](<https://www.kaggle.com/datasets/tejashvi14/medical-insurance-premium-prediction/data>).
+        - :red[**Data**]: [Kaggle Medical Insurance Premium](<https://www.kaggle.com/datasets/tejashvi14/medical-insurance-premium-prediction/data>).
         - :orange[**Age**]: Age of customer.
         - :orange[**Height**]: Height of customer.
         - :orange[**Weight**]: Weight of customer.
         - :orange[**Diabetes**]: Whether the person has abnormal blood sugar levels.
-        - :orange[**Blood Pressure Problems**]: Whether the person Has abnormal blood pressure levels.
+        - :orange[**Blood Pressure Problems**]: Whether the person has abnormal blood pressure levels.
         - :orange[**Any Transplants**]: Any major organ transplants.
         - :orange[**Any Chronice Disease**]: Whether customer suffers from chronic ailments like asthama, etc.
         - :orange[**Known Allergies**]: Whether the customer has any known allergies.
