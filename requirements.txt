@@ -3,7 +3,6 @@ altair
 plotly
 pandas
 numpy
-re
 lazypredict
 sklearn
 lightgbm
