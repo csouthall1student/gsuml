@@ -5,19 +5,18 @@
 
 # ### 0.1 Libraries
 
-# In[3]:
+# In[151]:
 
 
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import re
 from tabulate import tabulate
 
 
 # ### 0.2 Functions
 
-# In[5]:
+# In[153]:
 
 
 # Prints small readable dataframes
@@ -33,7 +32,7 @@ def scrub_colnames(string):
 
 # ### 1.1 Reading Raw Data
 
-# In[8]:
+# In[156]:
 
 
 dat_raw = pd.read_csv('Medicalpremium.csv')
@@ -41,7 +40,7 @@ dat_raw = pd.read_csv('Medicalpremium.csv')
 
 # ### 1.2 Standardize Column Names
 
-# In[10]:
+# In[158]:
 
 
 outcols = ['BloodPressureProblems',
@@ -69,191 +68,11 @@ for incol, outcol in zip(incols, outcols):
 dat.columns = dat.columns.map(scrub_colnames)
 
 
-# ## 1.3 Generate Descriptive Statistics for Features
-
-# In[12]:
-
-
-desc = dat.describe()
-desc
-
-
-# ## 2. Data Exploration
-
-# ### 2.1 Continuous/Discrete Numerical Data
-
-# #### 2.1.1 Premium vs. Age
-
-# In[16]:
-
-
-col = 'age'
-
-bins = [0, 25, 35, 45, 55, 100]
-labels = ['<25', '25-35', '35-45', '45-55', '55+']
-dat[f'binned_{col}'] = pd.cut(dat[col], bins=bins, labels=labels, right=False)
-
-bar = dat.groupby(f'binned_{col}', observed=True).mean().reset_index()
-bar['premium_stddev'] = dat.groupby(f'binned_{col}', observed=True).std().reset_index()['premium_price']
-pprint_df(bar[[f'binned_{col}', 'premium_price', 'premium_stddev']])
-
-plt.bar(bar[f'binned_{col}'], bar['premium_price'], color=['#90EE90', '#77DD77', '#32CD32', '#208B22', '#008000'], yerr=bar['premium_stddev'], capsize=10)
-plt.title(f'Average Premium by {col}')
-plt.xlabel(col)
-plt.ylabel('Premium')
-
-dat = dat.drop(f'binned_{col}', axis=1)
-
-
-# #### 2.1.2 Premium vs. Height
-
-# In[18]:
-
-
-col = 'height'
-
-bins = [0, desc[col]['25%'], desc[col]['50%'], desc[col]['75%'], desc[col]['max']]
-labels = ['0-25%', '25-50%', '50-75%', '75-100%']
-dat[f'binned_{col}'] = pd.cut(dat[col], bins=bins, labels=labels, right=False)
-
-
-bar = dat.groupby(f'binned_{col}', observed=True).mean().reset_index()
-bar['premium_stddev'] = dat.groupby(f'binned_{col}', observed=True).std().reset_index()['premium_price']
-pprint_df(bar[[f'binned_{col}', 'premium_price', 'premium_stddev']])
-
-plt.bar(bar[f'binned_{col}'], bar['premium_price'], color=['#90EE90', '#32CD32', '#208B22', '#008000'], yerr=bar['premium_stddev'], capsize=10)
-plt.title(f'Average Premium by {col}')
-plt.xlabel(col)
-plt.ylabel('Premium')
-
-dat = dat.drop(f'binned_{col}', axis=1)
-
-
-# #### 2.1.3 Premium vs. Weight
-
-# In[20]:
-
-
-col = 'weight'
-
-bins = [0, desc[col]['25%'], desc[col]['50%'], desc[col]['75%'], desc[col]['max']]
-labels = ['0-25%', '25-50%', '50-75%', '75-100%']
-dat[f'binned_{col}'] = pd.cut(dat[col], bins=bins, labels=labels, right=False)
-
-
-bar = dat.groupby(f'binned_{col}', observed=True).mean().reset_index()
-bar['premium_stddev'] = dat.groupby(f'binned_{col}', observed=True).std().reset_index()['premium_price']
-pprint_df(bar[[f'binned_{col}', 'premium_price', 'premium_stddev']])
-
-plt.bar(bar[f'binned_{col}'], bar['premium_price'], color=['#90EE90', '#32CD32', '#208B22', '#008000'], yerr=bar['premium_stddev'], capsize=10)
-plt.title(f'Average Premium by {col}')
-plt.xlabel(col)
-plt.ylabel('Premium')
-
-dat = dat.drop(f'binned_{col}', axis=1)
-
-
-# #### 2.1.4 Premium vs. Number of Surgeries
-
-# In[22]:
-
-
-col = 'number_of_major_surgeries'
-
-bar = dat.groupby('number_of_major_surgeries', observed=True).mean().reset_index()
-
-plt.bar(bar['number_of_major_surgeries'], bar['premium_price'], color=['#90EE90', '#32CD32', '#208B22', '#008000'])
-plt.title(f'Average Premium by {col}')
-plt.xlabel(col)
-plt.ylabel('Premium')
-
-
-# ### 2.2 Binary Variables
-# #### Diabetes:
-# ##### We observe that subpopulation paying above the 50th percentile premium has greater instances of diabetes.
-# #### Blood Pressure Problems:
-# ##### We generally observe higher instances of blood pressure problems in quartiles paying greater premiums.
-# #### Transplants:
-# ##### Of the subpopulation with transplants, over half are paying within the top quartile of premium rates.
-
-# In[24]:
-
-
-# Binning Premium Data Based on Quartiles
-bins = [0, 21000, 23000, 28000, 100000]
-labels = ['0-25%', '25-50%', '50-75%', '75-100%']
-dat['premium_quartile'] = pd.cut(dat['premium_price'], bins=bins, labels=labels, right=False)
-
-# Fitting Binary Variables into Premium Bins
-binary_cols = ['premium_quartile', 'diabetes', 'blood_pressure_problems', 'any_transplants', 'any_chronic_diseases', 'known_allergies', 'history_of_cancer_in_family']
-bar2 = dat[binary_cols].groupby('premium_quartile', observed=True).mean().reset_index()
-
-fig, ax = plt.subplots(2,3)
-fig.set_figwidth(15); fig.set_figheight(10)
-
-# Supblot for 'diabetes'
-ax[0,0].bar_label(ax[0,0].bar(bar2['premium_quartile'], bar2['diabetes'], color='red'),
-                 fmt='%.2f')
-ax[0,0].set_title('diabetes')
-ax[0,0].set_ylabel('Mean')
-ax[0,0].set_ylim(0,1)
-ax[0,0].set_xlabel('Percentile of Premium Price')
-
-# Supblot for 'blood_pressure_problems'
-ax[0,1].bar_label(ax[0,1].bar(bar2['premium_quartile'], bar2['blood_pressure_problems'], color='green'),
-                 fmt='%.2f')
-ax[0,1].set_title('blood_pressure_problems')
-ax[0,1].set_ylabel('Mean')
-ax[0,1].set_ylim(0,1)
-ax[0,1].set_xlabel('Percentile of Premium Price')
-
-# Supblot for 'any_transplants'
-ax[0,2].bar_label(ax[0,2].bar(bar2['premium_quartile'], bar2['any_transplants'], color='blue'),
-                 fmt='%.2f')
-ax[0,2].set_title('any_transplants')
-ax[0,2].set_ylabel('Mean')
-ax[0,2].set_ylim(0,1)
-ax[0,2].set_xlabel('Percentile of Premium Price')
-
-# Supblot for 'any_chronic_diseases'
-ax[1,0].bar_label(ax[1,0].bar(bar2['premium_quartile'], bar2['any_chronic_diseases'], color='orange'),
-                 fmt='%.2f')
-ax[1,0].set_title('any_chronic_diseases')
-ax[1,0].set_ylabel('Mean')
-ax[1,0].set_ylim(0,1)
-ax[1,0].set_xlabel('Percentile of Premium Price')
-
-# Supblot for 'known_allergies'
-ax[1,1].bar_label(ax[1,1].bar(bar2['premium_quartile'], bar2['known_allergies'], color='purple'),
-                 fmt='%.2f')
-ax[1,1].set_title('known_allergies')
-ax[1,1].set_ylabel('Mean')
-ax[1,1].set_ylim(0,1)
-ax[1,1].set_xlabel('Percentile of Premium Price')
-
-# Supblot for 'history_of_cancer_in_family'
-ax[1,2].bar_label(ax[1,2].bar(bar2['premium_quartile'], bar2['history_of_cancer_in_family'], color='gold'),
-                 fmt='%.2f')
-ax[1,2].set_title('history_of_cancer_in_family')
-ax[1,2].set_ylabel('Mean')
-ax[1,2].set_ylim(0,1)
-ax[1,2].set_xlabel('Percentile of Premium Price')
-
-plt.show()
-
-
 # ## 3. Predictive Modelling
-
-# In[26]:
-
-
-dat = dat.drop(columns=['premium_quartile'])  # predictors
-# minor data cleaning for predictive modelling
-
 
 # ### 3.1 AutoML using Lazy Predict (No Hyper parameter tuning, No Feature Selection, No Cross Validation)
 
-# In[28]:
+# In[161]:
 
 
 from lazypredict.Supervised import LazyRegressor
@@ -276,34 +95,7 @@ print(models)
 
 # ### 3.3 Top Models as per AutoML
 
-# ### Top 3 Models from LazyPredict
-# 1. HistGradientBoostingRegressor  
-# 2. LGBMRegressor  
-# 3. RandomForestRegressor
-# 
-# ![image.png](attachment:43e6db61-8770-48aa-97c4-e5263b12a2e0.png)
-# 
-# ### Top 3 Models from PyCaret
-# 1. Gradient Boosting Regressor  
-# 2. LGBMRegressor  
-# 3. CatBoost Regressor
-# 
-# ![image.png](attachment:a2d3cea5-ad96-498a-a1d9-e6d0c3d075f8.png)
-# 
-# ### Model Comparison Approach followed
-# 
-# To ensure a fair comparison, all selected models above were re-trained and re-evaluated.
-# 
-# **Evaluation Metrics:**
-# - Cross Validation RMSE (Root Mean Squared Error) – lower is better    
-# - Cross Validation Adjusted R² – accounts for model complexity - higher is better
-# 
-# **Note:**  
-# R² values from PyCaret were observed to be lower than those from LazyPredict.  
-# This is expected, as PyCaret performs feature selection, hyperparameter tuning and cross validation, which improve generalization but may reduce apparent performance compared to LazyPredict, which uses default model settings without tuning.
-# 
-
-# In[35]:
+# In[163]:
 
 
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor, HistGradientBoostingRegressor
@@ -396,7 +188,7 @@ print("\nModel Performance Comparison with Feature Selection & Tuning:")
 print(results_df.round(3))
 
 
-# In[36]:
+# In[164]:
 
 
 # Convert results dictionary to DataFrame
@@ -410,64 +202,6 @@ results_df[numeric_cols] = results_df[numeric_cols].round(3)
 # Display the table
 print("\nModel Performance Summary:")
 print(results_df.to_string(index=False))
-
-
-# ### 3.4 Compare Top Machine Learning Models
-
-# In[39]:
-
-
-# Convert results to DataFrame and sort by R²
-results_df = pd.DataFrame(results).T.sort_values(by='R²', ascending=False)
-
-# Set up figure with 6 subplots
-fig, ax = plt.subplots(2, 3, figsize=(21, 10))
-
-# RMSE plot
-results_df['RMSE'].plot(kind='barh', ax=ax[0, 0], color='coral')
-ax[0, 0].set_title('RMSE (Lower is Better)')
-ax[0, 0].set_xlabel('RMSE')
-ax[0, 0].invert_yaxis()
-ax[0, 0].grid(True, linestyle='--', alpha=0.6)
-
-# R² plot
-results_df['R²'].plot(kind='barh', ax=ax[0, 1], color='seagreen')
-ax[0, 1].set_title('R² Score (Higher is Better)')
-ax[0, 1].set_xlabel('R²')
-ax[0, 1].invert_yaxis()
-ax[0, 1].grid(True, linestyle='--', alpha=0.6)
-
-# Adjusted R² plot
-results_df['Adjusted R²'].plot(kind='barh', ax=ax[0, 2], color='slateblue')
-ax[0, 2].set_title('Adjusted R² (Higher is Better)')
-ax[0, 2].set_xlabel('Adjusted R²')
-ax[0, 2].invert_yaxis()
-ax[0, 2].grid(True, linestyle='--', alpha=0.6)
-
-# CV RMSE plot
-results_df['CV RMSE'].plot(kind='barh', ax=ax[1, 0], color='darkorange')
-ax[1, 0].set_title('CV RMSE (Lower is Better)')
-ax[1, 0].set_xlabel('CV RMSE')
-ax[1, 0].invert_yaxis()
-ax[1, 0].grid(True, linestyle='--', alpha=0.6)
-
-# CV R² plot
-results_df['CV R²'].plot(kind='barh', ax=ax[1, 1], color='darkgreen')
-ax[1, 1].set_title('CV R² (Higher is Better)')
-ax[1, 1].set_xlabel('CV R²')
-ax[1, 1].invert_yaxis()
-ax[1, 1].grid(True, linestyle='--', alpha=0.6)
-
-# CV Adjusted R² plot
-results_df['CV Adjusted R²'].plot(kind='barh', ax=ax[1, 2], color='mediumslateblue')
-ax[1, 2].set_title('CV Adjusted R² (Higher is Better)')
-ax[1, 2].set_xlabel('CV Adjusted R²')
-ax[1, 2].invert_yaxis()
-ax[1, 2].grid(True, linestyle='--', alpha=0.6)
-
-plt.suptitle('Model Performance Comparison (Hold-Out vs CV)', fontsize=16, fontweight='bold')
-plt.tight_layout(rect=[0, 0, 1, 0.96])
-plt.show()
 
 
 # ### 3.5 Best Model
@@ -491,38 +225,6 @@ plt.show()
 # 
 # ![image.png](attachment:1b9afa8c-f82f-4e80-a62a-a496cd83054c.png)
 # 
-
-# ### 3.7 SHAP Plot for Best Model
-
-# In[41]:
-
-
-import shap
-from sklearn.feature_selection import SelectKBest, f_regression
-from sklearn.ensemble import HistGradientBoostingRegressor
-
-# Step 1: Feature Selection with names preserved
-selector = SelectKBest(score_func=f_regression, k=5)
-selector.fit(X_train, y_train)
-
-# Get selected feature names
-selected_features = X_train.columns[selector.get_support()]
-
-# Transform train/test sets using selected columns only
-X_train_selected = X_train[selected_features]
-X_test_selected = X_test[selected_features]
-
-# Step 2: Re-train model with selected features
-best_model = HistGradientBoostingRegressor(max_iter=100, learning_rate=0.05, random_state=42)
-best_model.fit(X_train_selected, y_train)
-
-# Step 3: SHAP Explanation
-explainer = shap.Explainer(best_model, X_train_selected)
-shap_values = explainer(X_test_selected)
-
-# Step 4: SHAP Beeswarm Plot with actual feature names
-shap.plots.beeswarm(shap_values, max_display=10)
-
 
 # ### SHAP Analysis Commentary – Insurance Premium Prediction - HistGradientBoosting
 # 
@@ -552,58 +254,11 @@ shap.plots.beeswarm(shap_values, max_display=10)
 
 # ### 3.8 Scatter Plot of actual Vs predicted premium
 
-# In[43]:
-
-
-import shap
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.feature_selection import SelectKBest, f_regression
-from sklearn.ensemble import HistGradientBoostingRegressor
-
-# Step 1: Feature Selection
-selector = SelectKBest(score_func=f_regression, k=5)
-selector.fit(X_train, y_train)
-
-# Get selected feature names
-selected_features = X_train.columns[selector.get_support()]
-
-# Transform train/test sets using selected columns
-X_train_selected = X_train[selected_features]
-X_test_selected = X_test[selected_features]
-
-# Step 2: Fit HistGradientBoostingRegressor
-best_model = HistGradientBoostingRegressor(max_iter=100, learning_rate=0.05, random_state=42)
-best_model.fit(X_train_selected, y_train)
-
-# Step 3: Predict on test set
-y_pred = best_model.predict(X_test_selected)
-
-# Step 4: Plot Actual vs Predicted
-plt.figure(figsize=(10, 6))
-sns.scatterplot(x=y_test, y=y_pred, color='blue', edgecolor='black', alpha=0.6)
-
-# Ideal line (perfect prediction)
-min_val = min(min(y_test), min(y_pred))
-max_val = max(max(y_test), max(y_pred))
-plt.plot([min_val, max_val], [min_val, max_val], color='red', linestyle='--')
-
-plt.title('Scatter Plot: Actual vs Predicted (HistGradientBoostingRegressor)', fontsize=14)
-plt.xlabel('Actual Insurance Premium (Y_test)', fontsize=12)
-plt.ylabel('Predicted Insurance Premium (Y_pred)', fontsize=12)
-plt.grid(True)
-plt.tight_layout()
-plt.show()
-
-
-# #### The Actual and Predicted value scatter points fall along the 45 degree line which reflects good predictability
-
 # ## 4. Dashboard
 
 # ### 4.1
 
-# In[69]:
+# In[186]:
 
 
 import streamlit as st
@@ -612,10 +267,10 @@ import plotly.express as px
 
 #best_model.get_params()
 tmodels = models.T
-models
+#models
 
 
-# In[85]:
+# In[188]:
 
 
 def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
