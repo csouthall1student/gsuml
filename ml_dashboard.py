@@ -158,7 +158,7 @@ def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
 #with st.sidebar:
 #    st.title('🏂 US Population Dashboard')
 #    
-#   model_list = list(models.Model.unique())[::-1]
+#    model_list = list(models.Model.unique())[::-1]
 #    
 #    selected_model = st.selectbox('Select a model', model_list, index=len(model_list)-1)
 #    df_selected_model = models[models.Model == selected_model]
@@ -171,7 +171,7 @@ col = st.columns((15, 15), gap='medium')
 with col[0]:
     st.markdown('#### LazyPredict Results')
 
-    st.dataframe(df_selected_model_sorted,
+    st.dataframe(models,
                  column_order=("Model",
                                "RMSE",
                                "R-Squared",
