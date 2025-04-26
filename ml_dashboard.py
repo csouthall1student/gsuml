@@ -5,7 +5,7 @@
 
 # ### 0.1 Libraries
 
-# In[288]:
+# In[330]:
 
 
 import pandas as pd
@@ -15,7 +15,7 @@ import re
 
 # ### 0.2 Functions
 
-# In[290]:
+# In[332]:
 
 
 # Standardizes strings for columns names
@@ -27,7 +27,7 @@ def scrub_colnames(string):
 
 # ### 1.1 Reading Raw Data
 
-# In[293]:
+# In[335]:
 
 
 dat_raw = pd.read_csv('Medicalpremium.csv')
@@ -35,7 +35,7 @@ dat_raw = pd.read_csv('Medicalpremium.csv')
 
 # ### 1.2 Standardize Column Names
 
-# In[295]:
+# In[337]:
 
 
 outcols = ['BloodPressureProblems',
@@ -67,7 +67,7 @@ dat.columns = dat.columns.map(scrub_colnames)
 
 # ### 3.1 AutoML using Lazy Predict (No Hyper parameter tuning, No Feature Selection, No Cross Validation)
 
-# In[298]:
+# In[340]:
 
 
 models = pd.read_csv('data/lpmodels.csv')
@@ -75,7 +75,7 @@ models = pd.read_csv('data/lpmodels.csv')
 
 # ### 3.3 Top Models as per AutoML
 
-# In[300]:
+# In[342]:
 
 
 results_df = pd.read_csv('data/results_df.csv')
@@ -121,7 +121,7 @@ print(results_df.to_string(index=False))
 
 # ### 4.1
 
-# In[307]:
+# In[349]:
 
 
 import streamlit as st
@@ -130,10 +130,10 @@ import plotly.express as px
 
 #best_model.get_params()
 tmodels = models.T
-#models
+models
 
 
-# In[308]:
+# In[350]:
 
 
 def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
@@ -164,11 +164,11 @@ alt.themes.enable("dark")
 with st.sidebar:
     st.title('🏂 US Population Dashboard')
     
-    model_list = list(models.RMSE.unique())[::-1]
+    model_list = list(models.Model.unique())[::-1]
     
     selected_model = st.selectbox('Select a model', model_list, index=len(model_list)-1)
-    df_selected_model = models[models.RMSE == selected_model]
-    df_selected_model_sorted = df_selected_model.sort_values(by="Time Taken", ascending=False)
+    df_selected_model = models[models.Model == selected_model]
+    df_selected_model_sorted = df_selected_model.sort_values(by="RMSE", ascending=False)
 
     color_theme_list = ['blues', 'cividis', 'greens', 'inferno', 'magma', 'plasma', 'reds', 'rainbow', 'turbo', 'viridis']
     selected_color_theme = st.selectbox('Select a color theme', color_theme_list)
@@ -179,14 +179,32 @@ with col[0]:
     st.markdown('#### Top States')
 
     st.dataframe(df_selected_model_sorted,
-                 column_order=("RMSE", "Time Taken"),
+                 column_order=("Model", "Time Taken"),
                  hide_index=True,
                  width=None,
                  column_config={
-                    "RMSE": st.column_config.TextColumn(
-                        "RMSE",
+                    "Model": st.column_config.TextColumn(
+                        "Model",
                     ),
-                    "Time Taken": st.column_config.ProgressColumn(
+                    "RMSE": st.column_config.ProgressColumn(
+                        "RMSE",
+                        format="%f",
+                        min_value=0,
+                        max_value=max(df_selected_model_sorted.xs('RMSE', axis=1)),
+                     ),
+                     "R-Squared": st.column_config.ProgressColumn(
+                        "R-Squared",
+                        format="%f",
+                        min_value=0,
+                        max_value=max(df_selected_model_sorted.xs('R-Squared', axis=1)),
+                     ),
+                     "Adjusted R-Squared": st.column_config.ProgressColumn(
+                        "Adjusted R-Squared",
+                        format="%f",
+                        min_value=0,
+                        max_value=max(df_selected_model_sorted.xs('Adjusted R-Squared', axis=1)),
+                     ),
+                     "Time Taken": st.column_config.ProgressColumn(
                         "Time Taken",
                         format="%f",
                         min_value=0,
@@ -196,9 +214,18 @@ with col[0]:
     
     with st.expander('About', expanded=True):
         st.write('''
-            - Data: [U.S. Census Bureau](<https://www.census.gov/data/datasets/time-series/demo/popest/2010s-state-total.html>).
-            - :orange[**Gains/Losses**]: states with high inbound/ outbound migration for selected year
-            - :orange[**States Migration**]: percentage of states with annual inbound/ outbound migration > 50,000
+            - Data: [Kaggle Medical Insurance Premium](<https://www.kaggle.com/datasets/tejashvi14/medical-insurance-premium-prediction/data>).
+            - :orange[**Age**]: Age of customer.
+            - :orange[**Height**]: Height of customer.
+            - :orange[**Weight**]: Weight of customer.
+            - :orange[**Diabetes**]: Whether the person has abnormal blood sugar levels.
+            - :orange[**Blood Pressure Problems**]: Whether the person Has abnormal blood pressure levels.
+            - :orange[**Any Transplants**]: Any major organ transplants.
+            - :orange[**Any Chronice Disease**]: Whether customer suffers from chronic ailments like asthama, etc.
+            - :orange[**Known Allergies**]: Whether the customer has any known allergies.
+            - :orange[**History of Cancer**]: Whether any blood relative of the customer has had any form of cancer.
+            - :orange[**Number of Major Surgeries**]: The number of major surgeries that the person has had.
+            - :green[**Premium Price**]: Target variable for prediction to create a model that predicts the yearly medical cover cost
             ''')
 
 
