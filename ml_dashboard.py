@@ -111,7 +111,22 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-alt.theme.enable("quartz")
+# Define a black and white theme
+def black_and_white_theme():
+    return {
+        'config': {
+            'background': 'white',
+            'axis': {'titleColor': 'black'},
+            'text': {'color': 'black'}
+        }
+    }
+
+# Register the theme
+alt.theme.register('black_and_white', black_and_white_theme)
+
+# Enable the theme
+alt.theme.enable('black_and_white')
+
 
 
 def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
