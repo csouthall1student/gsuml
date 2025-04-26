@@ -190,25 +190,25 @@ with col[0]:
                         "RMSE",
                         format="%f",
                         min_value=0,
-                        max_value=max(df_selected_model_sorted.xs('RMSE', axis=1)),
+                        max_value=max(df_selected_model_sorted.xs('RMSE', axis=1))
                      ),
                      "R-Squared": st.column_config.ProgressColumn(
                         "R-Squared",
                         format="%f",
                         min_value=0,
-                        max_value=max(df_selected_model_sorted.xs('R-Squared', axis=1)),
+                        max_value=max(df_selected_model_sorted.xs('R-Squared', axis=1))
                      ),
                      "Adjusted R-Squared": st.column_config.ProgressColumn(
                         "Adjusted R-Squared",
                         format="%f",
                         min_value=0,
-                        max_value=max(df_selected_model_sorted.xs('Adjusted R-Squared', axis=1)),
+                        max_value=max(df_selected_model_sorted.xs('Adjusted R-Squared', axis=1))
                      ),
                      "Time Taken": st.column_config.ProgressColumn(
                         "Time Taken",
                         format="%f",
                         min_value=0,
-                        max_value=max(df_selected_model_sorted.xs('Time Taken', axis=1)),
+                        max_value=max(df_selected_model_sorted.xs('Time Taken', axis=1))
                      )}
                  )
     
