@@ -126,11 +126,18 @@ import altair as alt
 import plotly.express as px
 
 #Make Altair Charts
-rmse_chart = alt.Chart(results_df).mark_bar().encode(
-    x='Model:O',
-    y='RMSE:Q',
-    color='Model:N'
-)
+rmse_chart = (alt.Chart(results_df)
+              .mark_bar()
+              .encode(
+                  x='Model:O',
+                  y='CV RMSE:Q',
+                  color='Model:N'
+                  )
+              .properties(
+                  width=800,
+                  height=300
+                  )
+             )
 
 cv_rmse_chart = alt.Chart(results_df).mark_bar().encode(
     x='Model:O',
