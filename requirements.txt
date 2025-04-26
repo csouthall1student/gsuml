@@ -1,4 +1,5 @@
 streamlit
+streamlit-shap
 altair
 plotly
 pandas
