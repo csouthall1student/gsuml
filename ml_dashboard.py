@@ -170,10 +170,14 @@ with st.sidebar:
 col = st.columns((5), gap='medium')
 
 with col[0]:
-    st.markdown('#### Top States')
+    st.markdown('#### Lazy Predict Model Results')
 
     st.dataframe(df_selected_model_sorted,
-                 column_order=("Model", "Time Taken"),
+                 column_order=("Model",
+                               "RMSE",
+                               "R-Squared",
+                               "Adjusted R-Squared",
+                               "Time Taken"),
                  hide_index=True,
                  width=None,
                  column_config={
