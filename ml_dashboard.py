@@ -128,13 +128,14 @@ import streamlit as st
 import altair as alt
 import plotly.express as px
 
-#best_model.get_params()
-tmodels = models.T
-models
 
+st.set_page_config(
+    page_title="Your App Title",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-# In[350]:
-
+alt.themes.enable("dark")
 
 def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
     heatmap = alt.Chart(input_df).mark_rect().encode(
@@ -153,13 +154,6 @@ def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
     # height=300
     return heatmap
 
-st.set_page_config(
-    page_title="Your App Title",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
-alt.themes.enable("dark")
 
 with st.sidebar:
     st.title('🏂 US Population Dashboard')
