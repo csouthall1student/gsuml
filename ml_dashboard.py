@@ -189,25 +189,26 @@ def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
 with st.sidebar:
     st.title('Top Models')
     
-    model_list = list(results_df.Model.unique())[::-1]
+    measure_list = ['RMSE', 'CV RMSE', 'R²', 'Adjusted R²', 'CV R²', 'CV Adjusted R²']
     
-    selected_model = st.selectbox('Select a model', model_list, index=len(model_list)-1)
-    df_selected_model = models[results_df.Model == selected_model]
+    selected_model = st.selectbox('Select a measure', model_list, index=len(model_list)-1)
+    #df_selected_model = models[results_df.Model == selected_model]
 #    df_selected_model_sorted = df_selected_model.sort_values(by="RMSE", ascending=False)
 #
 #    selected_color_theme = 'blues'
 #
 col = st.columns((15, 15), gap='small')
 
+select_measure = 'RMSE'
 
 with col[0]:
     #st.markdown('#### Fine-Tuned Models Results')
 
-    st.altair_chart(alt.Chart(df_selected_model)
+    st.altair_chart(alt.Chart(results_df)
                     .mark_bar()
                     .encode(
-                        #x='Model:O',
-                        #y='CV RMSE:Q',
+                        x='Model:O',
+                        y=f'{select_measure}:Q',
                         color='Model:N'
                         )
                     .properties(
