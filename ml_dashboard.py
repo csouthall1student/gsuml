@@ -18,7 +18,6 @@ from sklearn.ensemble import HistGradientBoostingRegressor
 X_train = pd.read_csv('data/X_train_shap.csv')
 X_test = pd.read_csv('data/X_test_shap.csv')
 y_train = pd.read_csv('data/y_train_shap.csv')
-y_test = pd.read_csv('data/y_test_shap.csv')
 # Step 1: Feature Selection with names preserved
 selector = SelectKBest(score_func=f_regression, k=5)
 selector.fit(X_train, y_train)
@@ -180,7 +179,8 @@ def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
     # height=300
     return heatmap
 
-st_shap(shap.force_plot(explainer.expected_value, shap_values, X_test_selected), 400)
+#st_shap(shap.plots.beeswarm(explainer.expected_value, shap_values, X_test_selected), 400)
+st_shap(shap.plots.beeswarm(explainer.expected_value, shap_values, X_test_selected, max_display=10), 400)
 
 with st.sidebar:
     st.title('Fine Tuned Model Metrics')
