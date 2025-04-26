@@ -64,30 +64,7 @@ results_df = pd.read_csv('data/results_df.csv')
 # asets.
 # 
 
-# ### SHAP Analysis Commentary – Insurance Premium Prediction - HistGradientBoosting
-# 
-# This SHAP summary plot explains the impact of each feature on insurance premium predictions:
-# 
-# #### 1. `age`
-# - Higher `age` values (pink dots on far right side of vertical 0 line) significantly increase predicted premiums.
-# - Lower `age` values (blue dots on the far left side of vertical 0 line) decrease premiums.
-# - Clear positive correlation: **older individuals → higher insurance costs**.
-# 
-# #### 2. `any_transplants`
-# - Having undergone a transplant leads to a strong increase in predicted premiums (pink dots on far right).
-# - Those without (blue values - low feature value were not on extremes) have minimal or even negative influence on premiums.
-# 
-# #### 3. `any_chronic_diseases`
-# - Individuals with chronic conditions (pink dots on right side of vertical 0 line) show increase in premiums.
-# - Those without (blue values - low feature value were not on extremes) have minimal or even negative influence on premiums.
-# 
-# #### 4. `number_of_major_surgeries`
-# - More major surgeries tend to increase premiums slightly, but the effect is less consistent since low (blue) and high values (pink) overlap around 0
-# 
-# #### 5. `blood_pressure_problems`
-# - Least influential among the top 5 features.
-# - High blood pressure (small pink - High Value dots on little right of vertical 0 lines) contributes marginally to higher premiums. The blue and pink dots overlapping around 0 indicate little to no effect on prediction 
-# 
+
 # 
 
 # ### 3.8 Scatter Plot of actual Vs predicted premium
@@ -211,8 +188,33 @@ with st.expander('About the Data', expanded=True):
         - :orange[**Number of Major Surgeries**]: The number of major surgeries that the person has had.
         - :green[**Premium Price**]: Target variable for prediction to create a model that predicts the yearly medical cover cost
         ''')
+ 
 
-st_shap(shap.plots.beeswarm(shap_values), height=300)
+st.markdown("""### SHAP Analysis Commentary – Insurance Premium Prediction - HistGradientBoosting
+ 
+ This SHAP summary plot explains the impact of each feature on insurance premium predictions:
+ 
+ #### 1. `age`
+ - Higher `age` values (pink dots on far right side of vertical 0 line) significantly increase predicted premiums.
+ - Lower `age` values (blue dots on the far left side of vertical 0 line) decrease premiums.
+ - Clear positive correlation: **older individuals → higher insurance costs**.
+ 
+ #### 2. `any_transplants`
+ - Having undergone a transplant leads to a strong increase in predicted premiums (pink dots on far right).
+ - Those without (blue values - low feature value were not on extremes) have minimal or even negative influence on premiums.
+ 
+ #### 3. `any_chronic_diseases`
+ - Individuals with chronic conditions (pink dots on right side of vertical 0 line) show increase in premiums.
+ - Those without (blue values - low feature value were not on extremes) have minimal or even negative influence on premiums.
+ 
+ #### 4. `number_of_major_surgeries`
+ - More major surgeries tend to increase premiums slightly, but the effect is less consistent since low (blue) and high values (pink) overlap around 0
+ 
+ #### 5. `blood_pressure_problems`
+ - Least influential among the top 5 features.
+ - High blood pressure (small pink - High Value dots on little right of vertical 0 lines) contributes marginally to higher premiums. The blue and pink dots overlapping around 0 indicate little to no effect on prediction""")
+ 
+st_shap(shap.plots.beeswarm(shap_values), height=500)
 
 # In[ ]:
 
