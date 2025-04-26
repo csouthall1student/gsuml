@@ -135,7 +135,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-alt.themes.enable("dark")
+alt.themes.enable("quartz")
 
 def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
     heatmap = alt.Chart(input_df).mark_rect().encode(
@@ -164,13 +164,12 @@ with st.sidebar:
     df_selected_model = models[models.Model == selected_model]
     df_selected_model_sorted = df_selected_model.sort_values(by="RMSE", ascending=False)
 
-    color_theme_list = ['blues', 'cividis', 'greens', 'inferno', 'magma', 'plasma', 'reds', 'rainbow', 'turbo', 'viridis']
-    selected_color_theme = st.selectbox('Select a color theme', color_theme_list)
+    selected_color_theme = 'blues'
 
 col = st.columns((5), gap='medium')
 
 with col[0]:
-    st.markdown('#### Lazy Predict Model Results')
+    st.markdown('#### LazyPredict Results')
 
     st.dataframe(df_selected_model_sorted,
                  column_order=("Model",
@@ -194,19 +193,19 @@ with col[0]:
                         "R-Squared",
                         format="%f",
                         min_value=0,
-                        max_value=max(df_selected_model_sorted.xs('R-Squared', axis=1))
+                        max_value=max(df_selected_model_sorted.xs('RMSE', axis=1))
                      ),
                      "Adjusted R-Squared": st.column_config.ProgressColumn(
                         "Adjusted R-Squared",
                         format="%f",
                         min_value=0,
-                        max_value=max(df_selected_model_sorted.xs('Adjusted R-Squared', axis=1))
+                        max_value=max(df_selected_model_sorted.xs('RMSE', axis=1))
                      ),
                      "Time Taken": st.column_config.ProgressColumn(
                         "Time Taken",
                         format="%f",
                         min_value=0,
-                        max_value=max(df_selected_model_sorted.xs('Time Taken', axis=1))
+                        max_value=max(df_selected_model_sorted.xs('RMSE', axis=1))
                      )}
                  )
     
