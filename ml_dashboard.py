@@ -184,10 +184,10 @@ with col[0]:
                         "Model",
                     ),
                     "RMSE": st.column_config.TextColumn(
-                        "RMSE",
-                        format="%f",
-                        min_value=0,
-                        max_value=max(df_selected_model_sorted.xs('RMSE', axis=1))
+                        "RMSE"#,
+                        #format="%f",
+                        #min_value=0,
+                        #max_value=max(df_selected_model_sorted.xs('RMSE', axis=1))
                      ),
                      "R-Squared": st.column_config.ProgressColumn(
                         "R-Squared",
