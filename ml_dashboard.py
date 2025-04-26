@@ -180,7 +180,7 @@ def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
     return heatmap
 
 #st_shap(shap.plots.beeswarm(explainer.expected_value, shap_values, X_test_selected), 400)
-st_shap(shap.plots.beeswarm(explainer.expected_value, shap_values, X_test_selected, max_display=10), 400)
+st_shap(shap.plots.beeswarm(shap_values), 400)
 
 with st.sidebar:
     st.title('Fine Tuned Model Metrics')
