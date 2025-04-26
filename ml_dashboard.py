@@ -166,7 +166,7 @@ with st.sidebar:
 
     selected_color_theme = 'blues'
 
-col = st.columns((5), gap='medium')
+col = st.columns((15, 15), gap='medium')
 
 with col[0]:
     st.markdown('#### LazyPredict Results')
