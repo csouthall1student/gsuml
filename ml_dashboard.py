@@ -128,6 +128,34 @@ import streamlit as st
 import altair as alt
 import plotly.express as px
 
+#Make Altair Charts
+rmse_chart = alt.Chart(results_df).mark_bar().encode(
+    x='Model:O',
+    y='RMSE:Q',
+    color='Model:N',
+    column=':N'
+)
+
+cv_rmse_chart = alt.Chart(results_df).mark_bar().encode(
+    x='Model:O',
+    y='CV RMSE:Q',
+    color='Model:N',
+    column=':N'
+)
+
+r2_chart = alt.Chart(results_df).mark_bar().encode(
+    x='Model:O',
+    y='R-Squared:Q',
+    color='Model:N',
+    column=':N'
+)
+
+cv_r2_chart = alt.Chart(results_df).mark_bar().encode(
+    x='Model:O',
+    y='CV R-Squared:Q',
+    color='Model:N',
+    column=':N'
+)
 
 st.set_page_config(
     page_title="Your App Title",
@@ -166,7 +194,7 @@ def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
 #
 #    selected_color_theme = 'blues'
 #
-col = st.columns((15, 15), gap='small')
+col = st.columns((13, 3, 3, 3, 3, 3), gap='small')
 
 with col[0]:
     st.markdown('#### LazyPredict Results')
@@ -202,12 +230,11 @@ with col[0]:
                  )
 
 with col[1]:
-    st.markdown('#### Fine-Tuned Models Results')
+    #st.markdown('#### Fine-Tuned Models Results')
 
-    st.bar_chart(results_df,
-                 x='Model',
-                 y=['RMSE', 'CV RMSE']
-                )
+    st.altair_chart(
+        rmse_chart
+        )
 
 with st.expander('About the Data', expanded=True):
     st.write('''
