@@ -183,7 +183,7 @@ with col[0]:
                     "Model": st.column_config.TextColumn(
                         "Model",
                     ),
-                    "RMSE": st.column_config.ProgressColumn(
+                    "RMSE": st.column_config.TextColumn(
                         "RMSE",
                         format="%f",
                         min_value=0,
@@ -209,7 +209,7 @@ with col[0]:
                      )}
                  )
     
-with st.expander('About', expanded=True):
+with st.expander('About the Data', expanded=True):
     st.write('''
         - Data: [Kaggle Medical Insurance Premium](<https://www.kaggle.com/datasets/tejashvi14/medical-insurance-premium-prediction/data>).
         - :orange[**Age**]: Age of customer.
