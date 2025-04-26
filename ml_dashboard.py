@@ -12,14 +12,21 @@ import pandas as pd
 import numpy as np
 import re
 
+import streamlit as st
+import altair as alt
+import plotly.express as px
+
 import shap
 from streamlit_shap import st_shap
 from sklearn.feature_selection import SelectKBest, f_regression
 from sklearn.ensemble import HistGradientBoostingRegressor
 
+# Reading in data used in shap plot generation
 X_train = pd.read_csv('data/X_train_shap.csv')
 X_test = pd.read_csv('data/X_test_shap.csv')
 y_train = pd.read_csv('data/y_train_shap.csv')
+
+# Shap plot generation
 # Step 1: Feature Selection with names preserved
 selector = SelectKBest(score_func=f_regression, k=5)
 selector.fit(X_train, y_train)
@@ -39,90 +46,27 @@ best_model.fit(X_train_selected, y_train)
 explainer = shap.Explainer(best_model, X_train_selected)
 shap_values = explainer(X_test_selected)
 
-
-
-# ## 3. Predictive Modelling
-
-# ### 3.1 AutoML using Lazy Predict (No Hyper parameter tuning, No Feature Selection, No Cross Validation)
-
-# In[340]:
-
-
+# Reading in our processed data
 models = pd.read_csv('data/lpmodels.csv')
-
-
-# ### 3.3 Top Models as per AutoML
-
-# In[342]:
-
-
 results_df = pd.read_csv('data/results_df.csv')
 
-
-# ### 3.5 Best Model
-
-# asets.
-# 
-
-
-# 
-
-# ### 3.8 Scatter Plot of actual Vs predicted premium
-
-# ## 4. Dashboard
-
-# ### 4.1
-
-# In[349]:
-
-
-import streamlit as st
-import altair as alt
-import plotly.express as px
-
-
-
+#Setting up streamlit page
 st.set_page_config(
     page_title="Your App Title",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-
-# Enable the theme
-#alt.themes.enable('black_and_white')
-
-
-
-def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
-    heatmap = alt.Chart(input_df).mark_rect().encode(
-        y=alt.Y(f'{input_y}:O', axis=alt.Axis(title="", titleFontSize=18, titlePadding=15, titleFontWeight=900, labelAngle=0)),
-        x=alt.X(f'{input_x}:O', axis=alt.Axis(title="", titleFontSize=18, titlePadding=15, titleFontWeight=900)),
-        color=alt.Color(f'max({input_color}):Q',
-                        legend=None,
-                        scale=alt.Scale(scheme=input_color_theme)),
-        stroke=alt.value('black'),
-        strokeWidth=alt.value(0.25),
-        ).properties(width=900
-                     ).configure_axis(
-        labelFontSize=12,
-        titleFontSize=12
-        ) 
-    # height=300
-    return heatmap
-
-
+#Setting up streamlit sidebar
 with st.sidebar:
     st.title('Fine Tuned Model Metrics')
-    
     measure_list = ['RMSE', 'R²', 'Adjusted R²', 'CV RMSE', 'CV R²', 'CV Adjusted R²']
-    
     select_measure = st.selectbox('Select a measure', measure_list, index=len(measure_list)-1)
 
+#Setting up some columns for making smaller graphic windows
 col = st.columns((15, 15), gap='small')
 
-
-
+#Setting up our bar chart with error metrics across models
 with col[0]:
     st.markdown('#### Fine-Tuned Model Error')
 
@@ -139,6 +83,7 @@ with col[0]:
                         )
                     )
 
+#setting up our lazypredictor table display
 with col[1]:
     st.markdown('#### LazyPredict Results')
 
@@ -172,10 +117,7 @@ with col[1]:
                      )}
                  )
 
-
-
- 
-
+# SHAP explanation section
 with st.expander('SHAP Analysis Commentary – Insurance Premium Prediction - HistGradientBoosting', expanded=True):
     st.markdown("""
  
@@ -198,9 +140,11 @@ with st.expander('SHAP Analysis Commentary – Insurance Premium Prediction - Hi
  #### 5. `blood_pressure_problems`
  - Least influential among the top 5 features.
  - High blood pressure (small pink - High Value dots on little right of vertical 0 lines) contributes marginally to higher premiums. The blue and pink dots overlapping around 0 indicate little to no effect on prediction""")
- 
+
+# SHAP plot
 st_shap(shap.plots.beeswarm(shap_values), height=500)
 
+# Data link and field explanation
 with st.expander('About the Data', expanded=False):
     st.write('''
         - :red[**Data**]: [Kaggle Medical Insurance Premium](<https://www.kaggle.com/datasets/tejashvi14/medical-insurance-premium-prediction/data>).
@@ -216,8 +160,7 @@ with st.expander('About the Data', expanded=False):
         - :orange[**Number of Major Surgeries**]: The number of major surgeries that the person has had.
         - :green[**Premium Price**]: Target variable for prediction to create a model that predicts the yearly medical cover cost
         ''')
-# In[ ]:
 
 
 
-
+# See you later, Space Cowboy...
