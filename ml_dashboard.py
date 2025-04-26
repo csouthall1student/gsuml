@@ -166,7 +166,7 @@ def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
 #
 #    selected_color_theme = 'blues'
 #
-col = st.columns((15, 15), gap='medium')
+col = st.columns((15, 15), gap='small')
 
 with col[0]:
     st.markdown('#### LazyPredict Results')
@@ -200,7 +200,15 @@ with col[0]:
                         format="%.3f"
                      )}
                  )
-    
+
+with col[1]:
+    st.markdown('#### Fine-Tuned Models Results')
+
+    st.bar_chart(results_df,
+                 x='Model',
+                 y=['RMSE', 'CV RMSE']
+                )
+
 with st.expander('About the Data', expanded=True):
     st.write('''
         - Data: [Kaggle Medical Insurance Premium](<https://www.kaggle.com/datasets/tejashvi14/medical-insurance-premium-prediction/data>).
