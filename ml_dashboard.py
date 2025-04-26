@@ -212,21 +212,21 @@ with col[0]:
                      )}
                  )
     
-    with st.expander('About', expanded=True):
-        st.write('''
-            - Data: [Kaggle Medical Insurance Premium](<https://www.kaggle.com/datasets/tejashvi14/medical-insurance-premium-prediction/data>).
-            - :orange[**Age**]: Age of customer.
-            - :orange[**Height**]: Height of customer.
-            - :orange[**Weight**]: Weight of customer.
-            - :orange[**Diabetes**]: Whether the person has abnormal blood sugar levels.
-            - :orange[**Blood Pressure Problems**]: Whether the person Has abnormal blood pressure levels.
-            - :orange[**Any Transplants**]: Any major organ transplants.
-            - :orange[**Any Chronice Disease**]: Whether customer suffers from chronic ailments like asthama, etc.
-            - :orange[**Known Allergies**]: Whether the customer has any known allergies.
-            - :orange[**History of Cancer**]: Whether any blood relative of the customer has had any form of cancer.
-            - :orange[**Number of Major Surgeries**]: The number of major surgeries that the person has had.
-            - :green[**Premium Price**]: Target variable for prediction to create a model that predicts the yearly medical cover cost
-            ''')
+with st.expander('About', expanded=True):
+    st.write('''
+        - Data: [Kaggle Medical Insurance Premium](<https://www.kaggle.com/datasets/tejashvi14/medical-insurance-premium-prediction/data>).
+        - :orange[**Age**]: Age of customer.
+        - :orange[**Height**]: Height of customer.
+        - :orange[**Weight**]: Weight of customer.
+        - :orange[**Diabetes**]: Whether the person has abnormal blood sugar levels.
+        - :orange[**Blood Pressure Problems**]: Whether the person Has abnormal blood pressure levels.
+        - :orange[**Any Transplants**]: Any major organ transplants.
+        - :orange[**Any Chronice Disease**]: Whether customer suffers from chronic ailments like asthama, etc.
+        - :orange[**Known Allergies**]: Whether the customer has any known allergies.
+        - :orange[**History of Cancer**]: Whether any blood relative of the customer has had any form of cancer.
+        - :orange[**Number of Major Surgeries**]: The number of major surgeries that the person has had.
+        - :green[**Premium Price**]: Target variable for prediction to create a model that predicts the yearly medical cover cost
+        ''')
 
 
 # In[ ]:
