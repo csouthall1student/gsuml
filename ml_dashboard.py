@@ -189,9 +189,9 @@ def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
 with st.sidebar:
     st.title('Fine Tuned Model Metrics')
     
-    measure_list = ['RMSE', 'CV RMSE', 'R²', 'Adjusted R²', 'CV R²', 'CV Adjusted R²']
+    measure_list = ['RMSE', 'R²', 'Adjusted R²', 'CV RMSE', 'CV R²', 'CV Adjusted R²']
     
-    selected_model = st.selectbox('Select a measure', measure_list, index=len(measure_list)-1)
+    select_measure = st.selectbox('Select a measure', measure_list, index=len(measure_list)-1)
     #df_selected_model = models[results_df.Model == selected_model]
 #    df_selected_model_sorted = df_selected_model.sort_values(by="RMSE", ascending=False)
 #
@@ -199,7 +199,7 @@ with st.sidebar:
 #
 col = st.columns((15, 15), gap='small')
 
-select_measure = 'RMSE'
+
 
 with col[0]:
     #st.markdown('#### Fine-Tuned Models Results')
