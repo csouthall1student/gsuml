@@ -155,17 +155,17 @@ def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
     return heatmap
 
 
-with st.sidebar:
-    st.title('🏂 US Population Dashboard')
-    
-    model_list = list(models.Model.unique())[::-1]
-    
-    selected_model = st.selectbox('Select a model', model_list, index=len(model_list)-1)
-    df_selected_model = models[models.Model == selected_model]
-    df_selected_model_sorted = df_selected_model.sort_values(by="RMSE", ascending=False)
-
-    selected_color_theme = 'blues'
-
+#with st.sidebar:
+#    st.title('🏂 US Population Dashboard')
+#    
+#   model_list = list(models.Model.unique())[::-1]
+#    
+#    selected_model = st.selectbox('Select a model', model_list, index=len(model_list)-1)
+#    df_selected_model = models[models.Model == selected_model]
+#    df_selected_model_sorted = df_selected_model.sort_values(by="RMSE", ascending=False)
+#
+#    selected_color_theme = 'blues'
+#
 col = st.columns((15, 15), gap='medium')
 
 with col[0]:
@@ -185,17 +185,17 @@ with col[0]:
                     ),
                     "RMSE": st.column_config.NumberColumn(
                         "RMSE",
-                        format="%.3f"
+                        format="%.2f"
                      ),
-                     "R-Squared": st.column_config.ProgressColumn(
+                     "R-Squared": st.column_config.NumberColumn(
                         "R-Squared",
                         format="%.3f"
                      ),
-                     "Adjusted R-Squared": st.column_config.ProgressColumn(
+                     "Adjusted R-Squared": st.column_config.NumberColumn(
                         "Adjusted R-Squared",
                         format="%.3f"
                      ),
-                     "Time Taken": st.column_config.ProgressColumn(
+                     "Time Taken": st.column_config.NumberColumn(
                         "Time Taken",
                         format="%.3f"
                      )}
