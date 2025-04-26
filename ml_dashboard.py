@@ -38,9 +38,7 @@ best_model.fit(X_train_selected, y_train)
 explainer = shap.Explainer(best_model, X_train_selected)
 shap_values = explainer(X_test_selected)
 
-def st_shap(plot, height=None):
-    shap_html = f"<head>{shap.getjs()}</head><body>{plot.html()}</body>"
-    components.html(shap_html, height=height)
+
 
 # Standardizes strings for columns names
 def scrub_colnames(string):
@@ -149,40 +147,7 @@ import streamlit as st
 import altair as alt
 import plotly.express as px
 
-#Make Altair Charts
-rmse_chart = (alt.Chart(results_df)
-              .mark_bar()
-              .encode(
-                  x='Model:O',
-                  y='CV RMSE:Q',
-                  color='Model:N'
-                  )
-              .properties(
-                  width=200,
-                  height=800
-                  )
-             )
 
-cv_rmse_chart = alt.Chart(results_df).mark_bar().encode(
-    x='Model:O',
-    y='CV RMSE:Q',
-    color='Model:N',
-    column=':N'
-)
-
-r2_chart = alt.Chart(results_df).mark_bar().encode(
-    x='Model:O',
-    y='R-Squared:Q',
-    color='Model:N',
-    column=':N'
-)
-
-cv_r2_chart = alt.Chart(results_df).mark_bar().encode(
-    x='Model:O',
-    y='CV R-Squared:Q',
-    color='Model:N',
-    column=':N'
-)
 
 st.set_page_config(
     page_title="Your App Title",
@@ -191,6 +156,12 @@ st.set_page_config(
 )
 
 alt.themes.enable("quartz")
+
+
+def st_shap(plot, height=None):
+    shap_html = f"<head>{shap.getjs()}</head><body>{plot.html()}</body>"
+    components.html(shap_html, height=height)
+
 
 def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
     heatmap = alt.Chart(input_df).mark_rect().encode(
@@ -209,6 +180,7 @@ def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
     # height=300
     return heatmap
 
+st_shap(shap.force_plot(explainer.expected_value, shap_values, X_test_selected), 400)
 
 with st.sidebar:
     st.title('Fine Tuned Model Metrics')
