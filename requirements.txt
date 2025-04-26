@@ -3,3 +3,5 @@ altair
 plotly
 pandas
 numpy
+shap
+sklearn
