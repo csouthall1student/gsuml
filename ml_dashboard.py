@@ -11,12 +11,36 @@
 import pandas as pd
 import numpy as np
 import re
+import shap
+from sklearn.feature_selection import SelectKBest, f_regression
+from sklearn.ensemble import HistGradientBoostingRegressor
 
+X_train = pd.read_csv('data/X_train_shap.csv')
+X_test = pd.read_csv('data/X_test_shap.csv')
+y_train = pd.read_csv('data/y_train_shap.csv')
+y_test = pd.read_csv('data/y_test_shap.csv')
+# Step 1: Feature Selection with names preserved
+selector = SelectKBest(score_func=f_regression, k=5)
+selector.fit(X_train, y_train)
 
-# ### 0.2 Functions
+# Get selected feature names
+selected_features = X_train.columns[selector.get_support()]
 
-# In[332]:
+# Transform train/test sets using selected columns only
+X_train_selected = X_train[selected_features]
+X_test_selected = X_test[selected_features]
 
+# Step 2: Re-train model with selected features
+best_model = HistGradientBoostingRegressor(max_iter=100, learning_rate=0.05, random_state=42)
+best_model.fit(X_train_selected, y_train)
+
+# Step 3: SHAP Explanation
+explainer = shap.Explainer(best_model, X_train_selected)
+shap_values = explainer(X_test_selected)
+
+def st_shap(plot, height=None):
+    shap_html = f"<head>{shap.getjs()}</head><body>{plot.html()}</body>"
+    components.html(shap_html, height=height)
 
 # Standardizes strings for columns names
 def scrub_colnames(string):
