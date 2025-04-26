@@ -5,23 +5,18 @@
 
 # ### 0.1 Libraries
 
-# In[151]:
+# In[196]:
 
 
 import pandas as pd
 import numpy as np
 import re
-from tabulate import tabulate
 
 
 # ### 0.2 Functions
 
-# In[153]:
+# In[198]:
 
-
-# Prints small readable dataframes
-def pprint_df(dframe):
-    print(tabulate(dframe, headers='keys', tablefmt='psql', showindex=False))
 
 # Standardizes strings for columns names
 def scrub_colnames(string):
@@ -32,7 +27,7 @@ def scrub_colnames(string):
 
 # ### 1.1 Reading Raw Data
 
-# In[156]:
+# In[201]:
 
 
 dat_raw = pd.read_csv('Medicalpremium.csv')
@@ -40,7 +35,7 @@ dat_raw = pd.read_csv('Medicalpremium.csv')
 
 # ### 1.2 Standardize Column Names
 
-# In[158]:
+# In[203]:
 
 
 outcols = ['BloodPressureProblems',
@@ -72,7 +67,7 @@ dat.columns = dat.columns.map(scrub_colnames)
 
 # ### 3.1 AutoML using Lazy Predict (No Hyper parameter tuning, No Feature Selection, No Cross Validation)
 
-# In[161]:
+# In[206]:
 
 
 from lazypredict.Supervised import LazyRegressor
@@ -90,12 +85,12 @@ reg = LazyRegressor(verbose=0, ignore_warnings=True)
 models, predictions = reg.fit(X_train, X_test, y_train, y_test)
 
 # Show the results
-print(models)
+#print(models)
 
 
 # ### 3.3 Top Models as per AutoML
 
-# In[163]:
+# In[208]:
 
 
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor, HistGradientBoostingRegressor
@@ -141,7 +136,7 @@ model_grid = {
 
 # Loop through all models
 for name, (model, param_grid) in model_grid.items():
-    print(f"Training {name}...")
+    #print(f"Training {name}...")
 
     pipeline = Pipeline([
         ('feature_selection', SelectKBest(score_func=f_regression, k=5)),
@@ -184,11 +179,11 @@ for name, (model, param_grid) in model_grid.items():
 # Display results in tabular format
 results_df = pd.DataFrame(results).T
 results_df = results_df[['RMSE', 'R²', 'Adjusted R²', 'CV RMSE', 'CV R²', 'CV Adjusted R²', 'Best Params']]
-print("\nModel Performance Comparison with Feature Selection & Tuning:")
-print(results_df.round(3))
+#print("\nModel Performance Comparison with Feature Selection & Tuning:")
+#print(results_df.round(3))
 
 
-# In[164]:
+# In[209]:
 
 
 # Convert results dictionary to DataFrame
@@ -200,8 +195,8 @@ numeric_cols = ['RMSE', 'R²', 'Adjusted R²', 'CV R²', 'CV Adjusted R²']
 results_df[numeric_cols] = results_df[numeric_cols].round(3)
 
 # Display the table
-print("\nModel Performance Summary:")
-print(results_df.to_string(index=False))
+#print("\nModel Performance Summary:")
+#print(results_df.to_string(index=False))
 
 
 # ### 3.5 Best Model
@@ -258,7 +253,7 @@ print(results_df.to_string(index=False))
 
 # ### 4.1
 
-# In[186]:
+# In[219]:
 
 
 import streamlit as st
@@ -270,7 +265,7 @@ tmodels = models.T
 #models
 
 
-# In[188]:
+# In[220]:
 
 
 def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
