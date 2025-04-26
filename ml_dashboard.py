@@ -129,8 +129,7 @@ import plotly.express as px
 rmse_chart = alt.Chart(results_df).mark_bar().encode(
     x='Model:O',
     y='RMSE:Q',
-    color='Model:N',
-    column=':N'
+    color='Model:N'
 )
 
 cv_rmse_chart = alt.Chart(results_df).mark_bar().encode(
