@@ -181,31 +181,23 @@ with col[0]:
                  width=None,
                  column_config={
                     "Model": st.column_config.TextColumn(
-                        "Model",
+                        "Model"
                     ),
-                    "RMSE": st.column_config.TextColumn(
-                        "RMSE"#,
-                        #format="%f",
-                        #min_value=0,
-                        #max_value=max(df_selected_model_sorted.xs('RMSE', axis=1))
+                    "RMSE": st.column_config.NumberColumn(
+                        "RMSE",
+                        format="%.3f"
                      ),
                      "R-Squared": st.column_config.ProgressColumn(
                         "R-Squared",
-                        format="%f",
-                        min_value=0,
-                        max_value=max(df_selected_model_sorted.xs('RMSE', axis=1))
+                        format="%.3f"
                      ),
                      "Adjusted R-Squared": st.column_config.ProgressColumn(
                         "Adjusted R-Squared",
-                        format="%f",
-                        min_value=0,
-                        max_value=max(df_selected_model_sorted.xs('RMSE', axis=1))
+                        format="%.3f"
                      ),
                      "Time Taken": st.column_config.ProgressColumn(
                         "Time Taken",
-                        format="%f",
-                        min_value=0,
-                        max_value=max(df_selected_model_sorted.xs('RMSE', axis=1))
+                        format="%.3f"
                      )}
                  )
     
