@@ -5,7 +5,7 @@
 
 # ### 0.1 Libraries
 
-# In[196]:
+# In[288]:
 
 
 import pandas as pd
@@ -15,7 +15,7 @@ import re
 
 # ### 0.2 Functions
 
-# In[198]:
+# In[290]:
 
 
 # Standardizes strings for columns names
@@ -27,7 +27,7 @@ def scrub_colnames(string):
 
 # ### 1.1 Reading Raw Data
 
-# In[201]:
+# In[293]:
 
 
 dat_raw = pd.read_csv('Medicalpremium.csv')
@@ -35,7 +35,7 @@ dat_raw = pd.read_csv('Medicalpremium.csv')
 
 # ### 1.2 Standardize Column Names
 
-# In[203]:
+# In[295]:
 
 
 outcols = ['BloodPressureProblems',
@@ -67,158 +67,26 @@ dat.columns = dat.columns.map(scrub_colnames)
 
 # ### 3.1 AutoML using Lazy Predict (No Hyper parameter tuning, No Feature Selection, No Cross Validation)
 
-# In[206]:
+# In[298]:
 
 
-from lazypredict.Supervised import LazyRegressor
-from sklearn.model_selection import train_test_split
-
-# Separate features and target
-X = dat.drop(columns=['premium_price'])  # predictors
-y = dat['premium_price']  # regression target
-
-# Split data
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Initialize and run LazyRegressor
-reg = LazyRegressor(verbose=0, ignore_warnings=True)
-models, predictions = reg.fit(X_train, X_test, y_train, y_test)
-
-# Show the results
-#print(models)
+models = pd.read_csv('data/lpmodels.csv')
 
 
 # ### 3.3 Top Models as per AutoML
 
-# In[208]:
+# In[300]:
 
 
-from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor, HistGradientBoostingRegressor
-from lightgbm import LGBMRegressor
-from catboost import CatBoostRegressor
-from sklearn.metrics import mean_squared_error, r2_score, make_scorer
-from sklearn.model_selection import GridSearchCV, cross_val_score
-from sklearn.feature_selection import SelectKBest, f_regression
-from sklearn.pipeline import Pipeline
-
-# Define adjusted R² function
-def adjusted_r2_score(r2, n, k):
-    return 1 - (1 - r2) * (n - 1) / (n - k - 1)
-
-# Define RMSE scorer for CV
-rmse_scorer = make_scorer(mean_squared_error, greater_is_better=False, squared=False)
-
-results = {}
-
-# Model grid with basic parameter search space
-model_grid = {
-    'GradientBoosting': (
-        GradientBoostingRegressor(random_state=42),
-        {'model__n_estimators': [100, 200], 'model__learning_rate': [0.1, 0.05]}
-    ),
-    'LGBM': (
-        LGBMRegressor(random_state=42),
-        {'model__n_estimators': [100, 200], 'model__learning_rate': [0.1, 0.05]}
-    ),
-    'CatBoost': (
-        CatBoostRegressor(verbose=0, random_state=42),
-        {'model__depth': [4, 6], 'model__learning_rate': [0.1, 0.05]}
-    ),
-    'HistGradientBoosting': (
-        HistGradientBoostingRegressor(random_state=42),
-        {'model__max_iter': [100, 200], 'model__learning_rate': [0.1, 0.05]}
-    ),
-    'RandomForest': (
-        RandomForestRegressor(random_state=42),
-        {'model__n_estimators': [100, 200], 'model__max_depth': [None, 10]}
-    )
-}
-
-# Loop through all models
-for name, (model, param_grid) in model_grid.items():
-    #print(f"Training {name}...")
-
-    pipeline = Pipeline([
-        ('feature_selection', SelectKBest(score_func=f_regression, k=5)),
-        ('model', model)
-    ])
-
-    grid = GridSearchCV(pipeline, param_grid, cv=5, scoring='r2', n_jobs=-1)
-    grid.fit(X_train, y_train)
-
-    best_model = grid.best_estimator_
-    y_pred = best_model.predict(X_test)
-
-    n = X_test.shape[0]
-    k = X_test.shape[1]
-
-    # Hold-out test metrics
-    mse = mean_squared_error(y_test, y_pred)#, squared=False)
-    rmse = np.sqrt(mse)
-    r2 = r2_score(y_test, y_pred)
-    adj_r2 = adjusted_r2_score(r2, n, k)
-
-    # Cross-validation scores
-    cv_r2_scores = cross_val_score(best_model, X_train, y_train, cv=5, scoring='r2')
-    cv_r2 = np.mean(cv_r2_scores)
-    cv_adj_r2 = adjusted_r2_score(cv_r2, X_train.shape[0], k)
-
-    cv_rmse_scores = cross_val_score(best_model, X_train, y_train, cv=5, scoring=rmse_scorer)
-    cv_rmse = -np.mean(cv_rmse_scores)
-
-    results[name] = {
-        'Best Params': grid.best_params_,
-        'RMSE': rmse,
-        'R²': r2,
-        'Adjusted R²': adj_r2,
-        'CV RMSE': cv_rmse,
-        'CV R²': cv_r2,
-        'CV Adjusted R²': cv_adj_r2
-    }
-
-# Display results in tabular format
-results_df = pd.DataFrame(results).T
-results_df = results_df[['RMSE', 'R²', 'Adjusted R²', 'CV RMSE', 'CV R²', 'CV Adjusted R²', 'Best Params']]
-#print("\nModel Performance Comparison with Feature Selection & Tuning:")
-#print(results_df.round(3))
-
-
-# In[209]:
-
-
-# Convert results dictionary to DataFrame
-results_df = pd.DataFrame(results).T  # Transpose for model names as rows
-results_df = results_df.reset_index().rename(columns={'index': 'Model'})
-
-# Round numeric columns for display
-numeric_cols = ['RMSE', 'R²', 'Adjusted R²', 'CV R²', 'CV Adjusted R²']
-results_df[numeric_cols] = results_df[numeric_cols].round(3)
-
+results_df = pd.read_csv('data/results_df.csv')
 # Display the table
-#print("\nModel Performance Summary:")
-#print(results_df.to_string(index=False))
+print("\nModel Performance Summary:")
+print(results_df.to_string(index=False))
 
 
 # ### 3.5 Best Model
 
 # asets.
-# 
-
-# ### Why We Selected `HistGradientBoostingRegressor` as the Champion Model
-# 
-# - It achieved the **third-lowest Cross-Validated RMSE**, indicating strong predictive performance, only slightly behind the top two models.
-# - It also secured the **third-highest Cross-Validated Adjusted R²**, demonstrating a good balance between accuracy and model complexity.
-# - We preferred it over `GradientBoostingRegressor` because:
-#   - `HistGradientBoostingRegressor` is **faster and more efficient**, especially on large datasets, which is important for this use case.
-# - We selected it over `LGBMRegressor` because:
-#   - `LGBMRegressor` can be **more prone to overfitting**
-# 
-
-# ### 3.6 Tradeoffs Made while selecting the Best Model
-
-# ### Summary Tradeoff Table:
-# 
-# ![image.png](attachment:1b9afa8c-f82f-4e80-a62a-a496cd83054c.png)
 # 
 
 # ### SHAP Analysis Commentary – Insurance Premium Prediction - HistGradientBoosting
@@ -253,7 +121,7 @@ results_df[numeric_cols] = results_df[numeric_cols].round(3)
 
 # ### 4.1
 
-# In[219]:
+# In[307]:
 
 
 import streamlit as st
@@ -265,7 +133,7 @@ tmodels = models.T
 #models
 
 
-# In[220]:
+# In[308]:
 
 
 def make_heatmap(input_df, input_y, input_x, input_color, input_color_theme):
